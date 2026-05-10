@@ -1,25 +1,31 @@
-casino-pro/
-├── 
-├── 
-├── 
-├── 
-│
-├── 
-│   ├── User.js
-│   ├── Game.js
-│
-├── routes/
-│   ├── auth.js
-│   ├── admin.js
-│
-├── socket/
-│   └── socket.js
-│
-├── public/
-│   ├── index.html   (Splash + Login UI)
-│   ├── game.html    (Casino Game UI)
-│   ├── admin.html   (Admin Panel)
-│   ├── style.css
-│   ├── app.js
-│
-└── README.md
+const express = require("express");
+const http = require("http");
+const mongoose = require("mongoose");
+const socketIo = require("socket.io");
+require("dotenv").config();
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+app.use(express.json());
+app.use(express.static("public"));
+
+mongoose.connect(process.env.MONGO_URL)
+.then(() => console.log("DB Connected"));
+
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/admin", require("./routes/admin"));
+
+io.on("connection", (socket) => {
+    console.log("User connected");
+
+    socket.on("bet", (data) => {
+        io.emit("result", {
+            user: data.user,
+            win: Math.random() > 0.5
+        });
+    });
+});
+
+server.listen(3000, () => console.log("Server running"));
