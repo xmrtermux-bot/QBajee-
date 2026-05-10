@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Casino Pro</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div class="splash">
+    <h1>🎰 CASINO PRO</h1>
+</div>
+
+<div class="login-box">
+    <input id="u" placeholder="Username">
+    <input id="p" placeholder="Password" type="password">
+    <button onclick="login()">Login</button>
+</div>
+
+<script>
+function login(){
+    fetch("/api/auth/login", {
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+            username: u.value,
+            password: p.value
+        })
+    }).then(r=>r.json()).then(data=>{
+        if(data._id){
+            localStorage.setItem("user", JSON.stringify(data));
+            window.location = "game.html";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
