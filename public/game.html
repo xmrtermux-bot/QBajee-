@@ -1,1 +1,20 @@
+<h1>Casino Game 🎰</h1>
 
+<button onclick="bet()">Place Bet</button>
+
+<p id="result"></p>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+
+function bet(){
+    const user = JSON.parse(localStorage.getItem("user"));
+    socket.emit("bet", { user: user.username });
+}
+
+socket.on("result", (data)=>{
+    document.getElementById("result").innerText =
+    data.user + (data.win ? " WON 🎉" : " LOST ❌");
+});
+      </script>
